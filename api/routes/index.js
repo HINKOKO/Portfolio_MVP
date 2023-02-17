@@ -97,51 +97,51 @@ router.get('/api/auction/:auctionId', function
 
 // NEW ROUTE
 
-router.get('/api/auction/:auctionId/offer', function
-  (req, res, next) {
+// router.get('/api/auction/:auctionId/offer', function
+//   (req, res, next) {
 
-  if (req.params.auctionId) {
-    pool.query(`SELECT * FROM offer WHERE auction_id=${req.params.auctionId}`, (error, results) => {
-      if (error) {
-        throw error
-      }
-      res.status(200).json(results.rows)
-    })
-  }
-});
+//   if (req.params.auctionId) {
+//     pool.query(`SELECT * FROM offer WHERE auction_id=${req.params.auctionId}`, (error, results) => {
+//       if (error) {
+//         throw error
+//       }
+//       res.status(200).json(results.rows)
+//     })
+//   }
+// });
 
-// POST
-router.post('/api/auction/:auctionId/offer', function (req, res) {
-  console.log('---------1-');
-  console.log(req.body);
-  console.log('----------');
+// // POST
+// router.post('/api/auction/:auctionId/offer', function (req, res) {
+//   console.log('---------1-');
+//   console.log(req.body);
+//   console.log('----------');
 
-  console.log(req.params);
-  console.log('----------');
-  if (req.body.walletId) {
-    pool.query(`SELECT bidder_id FROM bidder WHERE wallet_id='${req.body.walletId}'`, (error, results) => {
-      if (error) {
-        throw error;
-      }
+//   console.log(req.params);
+//   console.log('----------');
+//   if (req.body.walletId) {
+//     pool.query(`SELECT bidder_id FROM bidder WHERE wallet_id='${req.body.walletId}'`, (error, results) => {
+//       if (error) {
+//         throw error;
+//       }
 
-      if (results.rows.length === 0) {
+//       if (results.rows.length === 0) {
 
-        res.status(400).json({ error: 'Invalid wallet address' });
-      } else {
-        const bidderId = results.rows[0].id;
+//         res.status(400).json({ error: 'Invalid wallet address' });
+//       } else {
+//         const bidderId = results.rows[0].id;
 
-        pool.query(`INSERT INTO offer (auction_id, bidder_id, created_on) VALUES (${auctionId}, ${bidderId}, now(), ${offerValue}) RETURNING *`,
-          (error, results) => {
-            if (error) {
-              throw error;
-            }
-            res.status(201).json(results.rows[0]);
-          }
-        );
-      }
-    });
-  }
-});
+//         pool.query(`INSERT INTO offer (auction_id, bidder_id, created_on) VALUES (${auctionId}, ${bidderId}, now(), ${offerValue}) RETURNING *`,
+//           (error, results) => {
+//             if (error) {
+//               throw error;
+//             }
+//             res.status(201).json(results.rows[0]);
+//           }
+//         );
+//       }
+//     });
+//   }
+// });
 
 
 

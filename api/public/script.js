@@ -1,9 +1,8 @@
-const displayWallet = document.getElementById("connectWallet");
+const displayWallet = document.getElementById('connectWallet');
 
-const bidBtn = document.getElementById("bid");
-const popup = document.getElementById("popup");
-const closeBtn = document.querySelector(".close");
-
+const bidBtn = document.getElementById('bid');
+const popup = document.getElementById('popup');
+const closeBtn = document.querySelector('.close');
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const abi = [
@@ -25,7 +24,7 @@ const abi = [
   'function withdraw() payable',
 ];
 
-const address = '0xe062e42b04f85D3FE52eE6ac484745017eA8A8E0';
+const address = '0xFFF6DC97C2B680D00038b8CFaBa0b9bE9D2e8481';
 let contract = null;
 
 async function getAccess() {
@@ -33,6 +32,7 @@ async function getAccess() {
   await provider.send('eth_requestAccounts', []);
   const signer = provider.getSigner();
   contract = new ethers.Contract(address, abi, signer);
+  console.log(contract);
 
   const eventLog = document.getElementById('events');
   contract.on('End', (highestBidder, highestBid) => {
@@ -41,37 +41,55 @@ async function getAccess() {
     );
   });
 
-  displayWallet.style.display = "none";
+  displayWallet.style.display = 'none';
   const walletConnected = function () {
     alert('Wallet connected to D-Auction');
-  }
+  };
   walletConnected();
   setTimeout(() => {
     walletConnected.removeEventListener('', walletConnected);
   }, 3000);
-
 }
-
 
 // Front
 
-
-
-document.addEventListener("DOMContentLoaded", function () {
-  contract ? displayWallet.style.display = "none" : displayWallet.style.display = "block";
+document.addEventListener('DOMContentLoaded', function () {
+  contract
+    ? (displayWallet.style.display = 'none')
+    : (displayWallet.style.display = 'block');
 }); // Doesn't work for now
 
 // Bid button
-bidBtn.addEventListener("click", function () {
-  popup.style.display = "block";
+bidBtn.addEventListener('click', function () {
+  popup.style.display = 'block';
 });
 
-closeBtn.addEventListener("click", function () {
-  popup.style.display = "none";
+closeBtn.addEventListener('click', function () {
+  popup.style.display = 'none';
 });
 
+// **** Back ****
+async function start() {
+  await getAccess();
+  const startingBid = document.getElementById('price').value;
+  // console.log(typeof startingBid);
+  const bidContract = ethers.BigNumber.from(startingBid);
+  await contract.start(bidContract);
+}
 
-// -Back
+async function bid() {
+  await getAccess();
+  const bidValue = document.getElementById('price').value;
+  // console.log(bidValue);
+  const bidEther = ethers.utils.parseEther(bidValue);
+  await contract
+    .bid({ value: bidEther })
+    .then(alert('success'))
+    .catch(err => {
+      console.log(error);
+    });
+  popup.style.display = 'none';
+}
 // ---------LEFT id
 // imgNFT
 
@@ -81,8 +99,6 @@ closeBtn.addEventListener("click", function () {
 // tokenStandard
 // tokenDescription
 
-
-
 // // -------Right id
 // nameItem
 // ownerID
@@ -90,11 +106,9 @@ closeBtn.addEventListener("click", function () {
 
 // bid (already done above)
 
-
 // // ------balancwallet
 // balance
 // // --------Graph (later)
-
 
 // // --------Bottom
 // priceOffer
@@ -104,8 +118,6 @@ closeBtn.addEventListener("click", function () {
 // priceTransfer
 // expirationTransfer
 // fromTransfer
-
-
 
 const bChain = document.querySelector('#blockchainName');
 const cAddress = document.querySelector('#contractAddress');
@@ -132,12 +144,7 @@ const pTransfer = document.querySelector('#priceTransfer');
 const eTransfer = document.querySelector('#expirationTransfer');
 const fTransfer = document.querySelector('#fromTransfer');
 
-
-
 // TIMER
-
-
-
 
 const startAuctionTimer = function () {
   const startTimeAuction = new Date(Date.now());
@@ -154,7 +161,9 @@ const startAuctionTimer = function () {
       return;
     }
 
-    const hours = Math.floor((auctionTimer % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const hours = Math.floor(
+      (auctionTimer % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
     const minutes = Math.floor((auctionTimer % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((auctionTimer % (1000 * 60)) / 1000);
 
@@ -171,11 +180,6 @@ const startAuctionTimer = function () {
 
 startAuctionTimer();
 
-
-
-
-
-
 // Date & Time
 const labelDate = document.querySelector('#dateHistory');
 const now = new Date();
@@ -189,9 +193,7 @@ const locale = navigator.language;
 const dateDisplay = new Intl.DateTimeFormat(locale, options).format(now);
 labelDate.textContent = dateDisplay;
 
-
 // TEST
-
 
 // fetch('http://localhost:3000/api/auctionvalues/auctionId')
 //   .then(res => res.json())
@@ -200,7 +202,6 @@ labelDate.textContent = dateDisplay;
 //     bChain.innerHTML = response;
 
 //   });
-
 
 const auctionId = 123;
 
@@ -214,11 +215,8 @@ const auctionId = 123;
 //     tDescription.innerHTML = response.Nft.description;
 //     nItem.innerHTML = response.Nft.nameOfItem;
 
-
 //     oID.innerHTML = response.Nft.owner;
 //     saEnd.innerHTML = response.Timer.saleEnd;
-
-
 
 //   });
 
@@ -240,7 +238,6 @@ const auctionId = 123;
 //     fTransfer.innerHTML = response.Transfers.from;
 //   });
 
-
 // // TEST DATABASE
 
 // fetch(`http://localhost:3000/api/auctions/`)
@@ -261,17 +258,19 @@ const auctionId = 123;
 
 fetch(`http://localhost:3000/api/auction/3/offer`, {
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
-  method: "post",
-  body: JSON.stringify({ auctionId: 3, walletId: '0x9e9b41c0f0d9886d1af194ae5b6f5b6f5d6c5aa6', offerValue: 0.77 })
+  method: 'post',
+  body: JSON.stringify({
+    auctionId: 3,
+    walletId: '0x9e9b41c0f0d9886d1af194ae5b6f5b6f5d6c5aa6',
+    offerValue: 0.77,
+  }),
 })
   .then(res => res.json())
   .then(response => {
     console.log(response);
-
   });
-
 
 // Might use later
 
@@ -282,24 +281,6 @@ fetch(`http://localhost:3000/api/auction/3/offer`, {
 //     startAuctionTimer(expirationDuration);
 //   })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // const el = document.querySelector('#nameItem');
 // fetch('http://localhost:3000/api/auctionvalues/123')
 //   .then(res => res.json())
@@ -309,25 +290,9 @@ fetch(`http://localhost:3000/api/auction/3/offer`, {
 
 //   })
 
-
 // fetch('http://localhost:3000/')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //   const el = document.querySelector("#name__item");
+//   const el = document.querySelector("#name__item");
 // el.addEventListener("click", function(el){
 //   fetch('http://localhost:3000/toto')
 //   .then(res => res.json())
@@ -336,17 +301,6 @@ fetch(`http://localhost:3000/api/auction/3/offer`, {
 //   });
 // }, false);
 
-
-
-
-
-
-
-
-
-
-
-
 // Change text value of div
 
 // fetch('http://localhost:3000/auction')
@@ -354,7 +308,6 @@ fetch(`http://localhost:3000/api/auction/3/offer`, {
 //   .then(html => {
 //     document.querySelector('.name__item').innerHTML = 'fabien';
 //   });
-
 
 //  Get text value of div using its class
 
@@ -366,7 +319,6 @@ fetch(`http://localhost:3000/api/auction/3/offer`, {
 //    const nameItem = doc.querySelector('.name__item');
 //    console.log(nameItem.textContent);
 //   })
-
 
 // Last test
 
@@ -382,7 +334,6 @@ fetch(`http://localhost:3000/api/auction/3/offer`, {
 
 // }, false)
 
-
 // const el1 = document.querySelector('#temp1');
 // console.log(el1);
 
@@ -396,4 +347,3 @@ fetch(`http://localhost:3000/api/auction/3/offer`, {
 
 //     });
 // }, false);
-
